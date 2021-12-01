@@ -1,16 +1,6 @@
 version: "3.3"
 services:
-        servidor-nats:
-                image: nats-proyecto
-                command: nats
-        aplicacion:
-                build:
-                        context: aplikazioa/
-                        dockerfile: Dockerfile
-                links:
-                 - servidor-nats
+        nats:
+                image: nats:latest
 
-                volumes:
-                 - ./python:/app:rw
-volumes:
-        volPython:
+
