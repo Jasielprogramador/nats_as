@@ -5,6 +5,8 @@ async def main():
     # Connect to NATS!
     nc = await nats.connect("demo.nats.io")
 
+    nc
+
     # Receive messages on 'foo'
     sub = await nc.subscribe("foo")
 
