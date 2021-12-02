@@ -1,6 +1,13 @@
-version: "3.3"
+version: "3.6"
 services:
         nats:
                 image: nats:latest
+                command: nats
 
+        python-erabiltzailea:
+                build: ./erabiltzailea
+                volumes:
+                        - ./erabiltzailea:rw
+                links:
+                        - nats
 
