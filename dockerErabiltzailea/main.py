@@ -41,6 +41,7 @@ async def main():
                 data = msg.data.decode("utf-8")
                 mezua = data.split("'")[0]
                 print('Mensaje   :', mezua)
+                print('----------------------')
 
         elif ans == "3":
             await nc.close()
