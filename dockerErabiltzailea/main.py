@@ -8,7 +8,15 @@ async def main():
     nc = await nats.connect('demo.nats.io')
 
     ans = True
-    user = raw_input("Quien eres? ")
+
+    chivato = True
+    while chivato:
+        user = raw_input("Quien eres? ")
+        if user == "":
+            print("\n Por favor pon el nombre del usuario")
+        else:
+            chivato = False
+
     sub = await nc.subscribe(user)
 
     while ans:
