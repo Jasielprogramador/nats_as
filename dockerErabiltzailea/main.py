@@ -6,15 +6,16 @@ from past.builtins import raw_input
 
 async def main():
     nc = await nats.connect('demo.nats.io')
-    sub = await nc.subscribe('user')
 
     ans = True
+    user = raw_input("Quien eres? ")
+    sub = await nc.subscribe(user)
+
     while ans:
         print("""
                 1.Enviar un mensaje a la cola 
-                2.Enviar un mensaje con respuesta a la cola
-                3.Leer el estado de la cola 
-                4.Salir
+                2.Leer el estado de la cola 
+                3.Salir
                 """)
         ans = raw_input("Que te gustaria hacer? ")
         if ans == "1":
@@ -22,20 +23,10 @@ async def main():
 
             # conversor de string a bytes
             text = bytes(text, 'utf-8')
-            await nc.publish('user', text)
+            await nc.publish(user, text)
             print('----------------------')
 
         elif ans == "2":
-            text = raw_input("Por favor, escribe el mensaje que quieres enviar: ")
-            respuesta = raw_input("Por favor, escribe la respuesta al mensaje que quieres enviar: ")
-
-            # conversor de string a bytes
-            text = bytes(text, 'utf-8')
-            respuesta = bytes(respuesta, 'utf-8')
-            await nc.publish('user', text, reply=respuesta)
-            print('----------------------')
-
-        elif ans == "3":
             print("\n El estado de la cola es el siguiente: ")
 
             while True:
@@ -46,10 +37,12 @@ async def main():
                     break
                 print('----------------------')
                 print('Usuario   :', msg.subject)
-                print('Mensaje   :', msg.data)
-                print('Respuesta :', msg.reply)
 
-        elif ans == "4":
+                data = msg.data.decode("utf-8")
+                mezua = data.split("'")[0]
+                print('Mensaje   :', mezua)
+
+        elif ans == "3":
             await nc.close()
             print("\n Programa finalizado, ten un buen dia :)")
             sys.exit(0);
