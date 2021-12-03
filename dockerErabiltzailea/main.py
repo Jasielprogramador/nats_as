@@ -1,66 +1,62 @@
 import asyncio
+import sys
 import nats
-from nats.errors import ConnectionClosedError, TimeoutError, NoServersError
+from past.builtins import raw_input
+
 
 async def main():
-    # It is very likely that the demo server will see traffic from clients other than yours.
-    # To avoid this, start your own locally and modify the example to use it.
-    nc = await nats.connect("nats://demo.nats.io:4222")
+    nc = await nats.connect('demo.nats.io')
+    sub = await nc.subscribe('user')
 
-    # You can also use the following for TLS against the demo server.
-    #
-    # nc = await nats.connect("tls://demo.nats.io:4443")
+    ans = True
+    while ans:
+        print("""
+                1.Enviar un mensaje a la cola 
+                2.Enviar un mensaje con respuesta a la cola
+                3.Leer el estado de la cola 
+                4.Salir
+                """)
+        ans = raw_input("Que te gustaria hacer? ")
+        if ans == "1":
+            text = raw_input("Por favor, escribe el mensaje que quieres enviar: ")
 
-    async def message_handler(msg):
-        subject = msg.subject
-        reply = msg.reply
-        data = msg.data.decode()
-        print("Received a message on '{subject} {reply}': {data}".format(
-            subject=subject, reply=reply, data=data))
+            # conversor de string a bytes
+            text = bytes(text, 'utf-8')
+            await nc.publish('user', text)
+            print('----------------------')
 
-    # Simple publisher and async subscriber via coroutine.
-    sub = await nc.subscribe("foo", cb=message_handler)
+        elif ans == "2":
+            text = raw_input("Por favor, escribe el mensaje que quieres enviar: ")
+            respuesta = raw_input("Por favor, escribe la respuesta al mensaje que quieres enviar: ")
 
-    # Stop receiving after 2 messages.
-    await sub.unsubscribe(limit=2)
-    await nc.publish("foo", b'Hello')
-    await nc.publish("foo", b'World')
-    await nc.publish("foo", b'!!!!!')
+            # conversor de string a bytes
+            text = bytes(text, 'utf-8')
+            respuesta = bytes(respuesta, 'utf-8')
+            await nc.publish('user', text, reply=respuesta)
+            print('----------------------')
 
-    # Synchronous style with iterator also supported.
-    sub = await nc.subscribe("bar")
-    await nc.publish("bar", b'First')
-    await nc.publish("bar", b'Second')
+        elif ans == "3":
+            print("\n El estado de la cola es el siguiente: ")
 
-    try:
-        async for msg in sub.messages:
-            print(f"Received a message on '{msg.subject} {msg.reply}': {msg.data.decode()}")
-            await sub.unsubscribe()
-    except Exception as e:
-        pass
+            while True:
+                try:
+                    msg = await sub.next_msg()
+                except:
+                    print("\n No hay ningun mensaje en la cola")
+                    break
+                print('----------------------')
+                print('Usuario   :', msg.subject)
+                print('Mensaje   :', msg.data)
+                print('Respuesta :', msg.reply)
 
-    async def help_request(msg):
-        print(f"Received a message on '{msg.subject} {msg.reply}': {msg.data.decode()}")
-        await nc.publish(msg.reply, b'I can help')
+        elif ans == "4":
+            await nc.close()
+            print("\n Programa finalizado, ten un buen dia :)")
+            sys.exit(0);
 
-    # Use queue named 'workers' for distributing requests
-    # among subscribers.
-    sub = await nc.subscribe("help", "workers", help_request)
+        elif ans != "":
+            print("\n Por favor elige uno de estos valores [1,2,3,4]")
 
-    # Send a request and expect a single response
-    # and trigger timeout if not faster than 500 ms.
-    try:
-        response = await nc.request("help", b'help me', timeout=0.5)
-        print("Received response: {message}".format(
-            message=response.data.decode()))
-    except TimeoutError:
-        print("Request timed out")
-
-    # Remove interest in subscription.
-    await sub.unsubscribe()
-
-    # Terminate connection to NATS.
-    await nc.drain()
 
 if __name__ == '__main__':
     asyncio.run(main())
