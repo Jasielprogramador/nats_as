@@ -37,18 +37,22 @@ async def main():
         elif ans == "2":
             print("\n El estado de la cola es el siguiente: ")
 
+            cola = False
+
             while True:
                 try:
                     msg = await sub.next_msg()
                 except:
-                    print("\n No hay ningun mensaje en la cola")
+                    if(cola == False):
+                        print("\n La cola de mensajes esta vacia")
                     break
+
                 print('----------------------')
                 print('Usuario   :', msg.subject)
-
                 data = msg.data.decode("utf-8")
                 mezua = data.split("'")[0]
                 print('Mensaje   :', mezua)
+                cola = True
                 print('----------------------')
 
         elif ans == "3":
