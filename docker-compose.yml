@@ -2,7 +2,11 @@ version: "3.6"
 services:
         servidor-nats:
                 image: nats:latest
+                expose:
+                        - "4222"
+                ports:
+                        - 4222:4222
+
+        app:
                 build: dockerErabiltzailea/
-
-
 

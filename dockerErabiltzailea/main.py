@@ -1,17 +1,20 @@
 import asyncio
 import sys
-import nats
-from past.builtins import raw_input
+from nats.aio.client import Client as NATS
 
 
 async def main():
-    nc = await nats.connect('demo.nats.io')
-
+    nc = NATS()
+    await nc.connect(servers=['nats://demo.nats.io:4222'])
     ans = True
 
     chivato = True
     while chivato:
-        user = raw_input("Quien eres? ")
+        try:
+            user = input("Por favor escribe tu nombre de usuario: ")
+        except EOFError:
+            return
+
         if user == "":
             print("\n Por favor pon el nombre del usuario")
         else:
@@ -25,9 +28,17 @@ async def main():
                 2.Leer el estado de la cola 
                 3.Salir
                 """)
-        ans = raw_input("Que te gustaria hacer? ")
+
+        try:
+            ans = input("Que te gustaria hacer? ")
+        except EOFError:
+            return
         if ans == "1":
-            text = raw_input("Por favor, escribe el mensaje que quieres enviar: ")
+
+            try:
+                text = input("Por favor, escribe el mensaje que quieres enviar: ")
+            except EOFError:
+                return
 
             # conversor de string a bytes
             text = bytes(text, 'utf-8')
