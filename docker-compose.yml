@@ -2,6 +2,7 @@ version: "3.6"
 services:
         servidor-nats:
                 image: nats:latest
+                container_name: servidor-nats
                 expose:
                         - "4222"
                 ports:
@@ -9,4 +10,11 @@ services:
 
         app:
                 build: dockerErabiltzailea/
+                container_name: app-nats
+                depends_on:
+                        - servidor-nats
+                stdin_open: true
+                tty: true
+
+
 
