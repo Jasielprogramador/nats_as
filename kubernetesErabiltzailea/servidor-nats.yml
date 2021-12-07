@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bdpot
+spec:
+  containers:
+    - name: server-nats
+      image: nats:latest
+      ports:
+        - containerPort: 4222

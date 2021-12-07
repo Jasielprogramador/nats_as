@@ -3,6 +3,10 @@
 
 ## Autor: Asier Rosa Pacho
 
+###Dependencias:
+1. Se necesita que este [Docker](https://docs.docker.com/get-docker/) instalado
+2. Se necesita que este [Kubernetes](https://kubernetes.io/es/docs/tasks/tools/install-kubectl/) instalado
+
 Para poder ejecutar localmente la aplicación de nats sigue los siguientes pasos:
 
 1. `git clone https://github.com/Jasielprogramador/nats_as.git`
