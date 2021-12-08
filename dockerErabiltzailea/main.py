@@ -73,7 +73,7 @@ async def main():
             sys.exit(0);
 
         elif ans != "":
-            print("\n Por favor elige uno de estos valores [1,2,3,4]")
+            print("\n Por favor elige uno de estos valores [1,2,3]")
 
 
 if __name__ == '__main__':
