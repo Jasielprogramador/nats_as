@@ -6,7 +6,7 @@ from nats.aio.client import Client as NATS
 async def main():
     nc = NATS()
     #Te conectas al servidor
-    await nc.connect(servers=['nats://demo.nats.io:4222'])
+    await nc.connect(servers=['nats://localhost:4222'])
     ans = True
 
     chivato = True
