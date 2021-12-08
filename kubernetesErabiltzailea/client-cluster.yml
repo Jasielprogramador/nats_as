@@ -4,6 +4,8 @@ metadata:
   name: client-cluster
 spec:
   type: ClusterIP
+  selector:
+    component: db
   ports:
   - port: 4222
     targetPort: 4222
